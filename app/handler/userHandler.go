@@ -51,6 +51,7 @@ func UsersGet(response http.ResponseWriter, request *http.Request) {
 	// json.NewEncoder(response).Encode(users)
 }
 
+// UserGet gets user
 func UserGet(response http.ResponseWriter, request *http.Request) {
 	response.Header().Set("content-type", "application/json")
 	params := mux.Vars(request)

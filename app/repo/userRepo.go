@@ -99,12 +99,12 @@ func UsersDeleteByEmpid(ctx context.Context, empid string) (*model.User, error) 
 func UsersIsAlreadyExists(ctx context.Context, id string) bool {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(usersCollection)
-	internalId, err := primitive.ObjectIDFromHex(id)
+	internalID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return false
 	}
 	var u model.User
-	erro := collection.FindOne(ctx, bson.M{"_id": internalId}).Decode(&u)
+	erro := collection.FindOne(ctx, bson.M{"_id": internalID}).Decode(&u)
 
 	return erro == nil
 }

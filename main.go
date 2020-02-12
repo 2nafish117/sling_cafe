@@ -52,9 +52,13 @@ func main() {
 	router.HandleFunc(base+"/mealtypes", handler.MealTypePost).Methods("POST")
 	// @TODO: Add filters, pagination
 	router.HandleFunc(base+"/mealtypes", handler.MealTypesGet).Methods("GET")
+	// @TODO: implement
+	// router.HandleFunc(base+"/mealtypes/{mealtypeid}", handler.MealTypesPut).Methods("PUT")
 
-	// router.HandleFunc(base+"/receipts/{id:[0-9a-f]{24}", handler.ReceiptGet).Methods("GET")
-	// router.HandleFunc(base+"/receipts/", handler.ReceiptsGet).Methods("GET")
+	router.HandleFunc(base+"/receipts/user/{empid:[a-zA-Z0-9]+", handler.ReceiptGet).Methods("GET")
+	router.HandleFunc(base+"/receipts/user/{id:[0-9a-f]{24}", handler.ReceiptGet).Methods("GET")
+	// @TODO: Add filters, pagination
+	router.HandleFunc(base+"/receipts/", handler.ReceiptsGet).Methods("GET")
 	// @TODO listen and serve arguments fix?
 	http.ListenAndServe(cfg.ApiAddr, router)
 }

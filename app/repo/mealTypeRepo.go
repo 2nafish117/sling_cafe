@@ -56,11 +56,12 @@ func MealTypesFindOne(ctx context.Context, query interface{}) (*model.MealType, 
 	return &mealType, err
 }
 
+// @TODO: implement it
 // MealTypesUpdateOne updates one meal in the repository and returns it
-func MealTypesUpdateOne(ctx context.Context, mealType *model.MealType) (*model.MealType, error) {
-	conn := db.GetInstance()
-	collection := conn.Database(config.GetInstance().DbName).Collection(mealTypesCollection)
-	mt := &model.MealType{}
-	err := collection.FindOneAndUpdate(ctx, bson.M{"_id": mealType.ID}, mealType).Decode(mt)
-	return mt, err
-}
+// func MealTypesUpdateOne(ctx context.Context, id string, mealType *model.MealType) (*model.MealType, error) {
+// 	conn := db.GetInstance()
+// 	collection := conn.Database(config.GetInstance().DbName).Collection(mealTypesCollection)
+
+// 	err := collection.FindOneAndUpdate(ctx, bson.M{"mealtypeid": id}, mealType).Decode(mt)
+// 	return mt, err
+// }
