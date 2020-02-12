@@ -16,6 +16,7 @@ import (
 
 const mealsCollection string = "meals"
 
+// MealsFindAll returns all meals
 // @TODO pagination version of FindAll
 func MealsFindAll(ctx context.Context) ([]*model.Meal, error) {
 	conn := db.GetInstance()
@@ -34,6 +35,7 @@ func MealsFindAll(ctx context.Context) ([]*model.Meal, error) {
 	return meals, nil
 }
 
+// MealsFindOne returns first meal matching query
 func MealsFindOne(ctx context.Context, query interface{}) (*model.Meal, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(mealsCollection)
@@ -46,6 +48,7 @@ func MealsFindOne(ctx context.Context, query interface{}) (*model.Meal, error) {
 	return &meal, nil
 }
 
+// MealsFindAllByEmpid finds all the meals eaten by an employee of empid
 func MealsFindAllByEmpid(ctx context.Context, empid string) ([]*model.Meal, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(mealsCollection)
@@ -63,6 +66,7 @@ func MealsFindAllByEmpid(ctx context.Context, empid string) ([]*model.Meal, erro
 	return meals, nil
 }
 
+// MealsInsertOne inserts one meal into the repository
 func MealsInsertOne(ctx context.Context, meal *model.Meal) (*model.Meal, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(mealsCollection)

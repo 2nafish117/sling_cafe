@@ -19,6 +19,7 @@ import (
 
 const usersCollection string = "users"
 
+// UsersFindAll returns all users from repo
 // @TODO pagination version of FindAll
 func UsersFindAll(ctx context.Context) ([]*model.User, error) {
 	conn := db.GetInstance()
@@ -37,6 +38,7 @@ func UsersFindAll(ctx context.Context) ([]*model.User, error) {
 	return users, nil
 }
 
+// UsersFindOne finds first user matching query and returns it
 func UsersFindOne(ctx context.Context, query interface{}) (*model.User, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(usersCollection)
@@ -45,23 +47,22 @@ func UsersFindOne(ctx context.Context, query interface{}) (*model.User, error) {
 	return &user, err
 }
 
+// UsersFindByEmpid finds user with empid and returns
 func UsersFindByEmpid(ctx context.Context, empid string) (*model.User, error) {
 	return UsersFindOne(ctx, bson.M{"empid": empid})
 }
 
-// FindOneById, find the user by the provided id
-// return matched user and error if any
+// UsersFindOneById find the user by id
 func UsersFindOneById(ctx context.Context, id string) (*model.User, error) {
-	internalId, err := primitive.ObjectIDFromHex(id)
+	internalID, err := primitive.ObjectIDFromHex(id)
 	if err != nil {
 		return nil, err
 	}
 
-	return UsersFindOne(ctx, bson.M{"_id": internalId})
+	return UsersFindOne(ctx, bson.M{"_id": internalID})
 }
 
-// Create, will perform db opration to save user
-// Returns modified user and error if occurs
+// UsersInsertOne inserts one user to the repository
 func UsersInsertOne(ctx context.Context, u *model.User) (*model.User, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(usersCollection)
@@ -74,8 +75,7 @@ func UsersInsertOne(ctx context.Context, u *model.User) (*model.User, error) {
 	return u, nil
 }
 
-// Delete, will remove user entry from DB
-// Return error if any
+// UsersDeleteOne deletes a user and returns it
 func UsersDeleteOne(ctx context.Context, user *model.User) (*model.User, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(usersCollection)
@@ -85,6 +85,7 @@ func UsersDeleteOne(ctx context.Context, user *model.User) (*model.User, error) 
 	return &u, err
 }
 
+// UsersDeleteByEmpid deletes a user by empid and returns it
 func UsersDeleteByEmpid(ctx context.Context, empid string) (*model.User, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(usersCollection)
@@ -94,16 +95,7 @@ func UsersDeleteByEmpid(ctx context.Context, empid string) (*model.User, error) 
 	return &u, err
 }
 
-// // Update, will update user data by id
-// // return error if any
-// func Update(ctx context.Context, query interface{}, change interface{}) (*model.User, error) {
-// 	conn := db.GetInstance()
-// 	collection := conn.Database(config.GetInstance().DbName).Collection(usersCollection)
-// 	var user model.User
-// 	err := collection.FindOneAndUpdate(ctx, query, change).Decode(&user)
-// 	return &user, err
-// }
-
+// UsersIsAlreadyExists asks repo if user already exists, by id
 func UsersIsAlreadyExists(ctx context.Context, id string) bool {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(usersCollection)
@@ -117,6 +109,7 @@ func UsersIsAlreadyExists(ctx context.Context, id string) bool {
 	return erro == nil
 }
 
+// UsersIsAlreadyExistsWithEmpid asks repo if user already exists, by empid
 func UsersIsAlreadyExistsWithEmpid(ctx context.Context, empid string) bool {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(usersCollection)

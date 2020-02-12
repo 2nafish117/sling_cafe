@@ -1,5 +1,6 @@
 * abstract into respository, CRUD users, meals, mealtype, etc (vhighp)
 * pagination on multiple things (highp)
 * streamline responses (highp)
+* Validation checks at the repository level or service level ? (highp)
 * Sling Cafe docs is getting outdated, update it (highp)
 * abstract Errors (lowp)

@@ -16,6 +16,7 @@ import (
 
 const mealTypesCollection string = "mealtypes"
 
+// MealTypesInsertOne inserts one meal into the repository
 func MealTypesInsertOne(ctx context.Context, mealType *model.MealType) (*model.MealType, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(mealTypesCollection)
@@ -29,6 +30,7 @@ func MealTypesInsertOne(ctx context.Context, mealType *model.MealType) (*model.M
 	return mealType, nil
 }
 
+// MealTypesFindAll returns all meals
 // @TODO pagination version of FindAll
 func MealTypesFindAll(ctx context.Context) ([]*model.MealType, error) {
 	conn := db.GetInstance()
@@ -44,6 +46,7 @@ func MealTypesFindAll(ctx context.Context) ([]*model.MealType, error) {
 	return mealTypes, err
 }
 
+// MealTypesFindOne returns first meal matching query in repository
 func MealTypesFindOne(ctx context.Context, query interface{}) (*model.MealType, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(mealTypesCollection)
@@ -53,6 +56,7 @@ func MealTypesFindOne(ctx context.Context, query interface{}) (*model.MealType, 
 	return &mealType, err
 }
 
+// MealTypesUpdateOne updates one meal in the repository and returns it
 func MealTypesUpdateOne(ctx context.Context, mealType *model.MealType) (*model.MealType, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(mealTypesCollection)
