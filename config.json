@@ -1,0 +1,7 @@
+{
+    "api_name" : "slingcafe",
+    "api_version" : "v1",
+    "api_addr" : "localhost:12345",
+    "db_addr" : "localhost:27017",
+    "db_name" : "test_db"
+}

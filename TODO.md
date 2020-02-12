@@ -1,0 +1,5 @@
+* abstract into respository, CRUD users, meals, mealtype, etc (vhighp)
+* pagination on multiple things (highp)
+* streamline responses (highp)
+* Sling Cafe docs is getting outdated, update it (highp)
+* abstract Errors (lowp)
