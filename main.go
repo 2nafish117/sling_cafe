@@ -2,25 +2,21 @@ package main
 
 import (
 	"context"
-	// "encoding/json"
-	"fmt"
+	// "fmt"
 	"sling_cafe/config"
 	"sling_cafe/db"
 
-	"net/http"
-	// "time"
-
+	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
-	// "go.mongodb.org/mongo-driver/bson"
-	// "go.mongodb.org/mongo-driver/bson/primitive"
+	"net/http"
 	"sling_cafe/app/handler"
+	. "sling_cafe/log"
 )
 
 func main() {
-	fmt.Println("Starting the application...")
+	Log.Info("Starting...")
 
 	cfg := config.GetInstance()
-	fmt.Println(cfg)
 	db.Connect()
 	db := db.GetInstance()
 	defer db.Disconnect(context.TODO())
@@ -35,12 +31,12 @@ func main() {
 	*/
 
 	base := "/" + cfg.ApiName + "/" + cfg.ApiVersion
-	fmt.Println(base)
 	router.HandleFunc(base+"/users", handler.UserPost).Methods("POST")
 	router.HandleFunc(base+"/users/{id:[0-9a-f]{24}}", handler.UserGet).Methods("GET") // order of these registrations matter !!!
 	router.HandleFunc(base+"/users/{empid:[a-zA-Z0-9]+}", handler.UserGetByEmpid).Methods("GET")
 	// @TODO: Add filters, pagination
 	router.HandleFunc(base+"/users", handler.UsersGet).Methods("GET")
+	router.HandleFunc(base+"/users/{empid:[a-zA-Z0-9]+}", handler.UserPutByEmpid).Methods("PUT")
 	router.HandleFunc(base+"/users/{id:[0-9a-f]{24}}", handler.UserDelete).Methods("DELETE") // order of these registrations matter !!!
 	router.HandleFunc(base+"/users/{empid:[a-zA-Z0-9]+}", handler.UserDeleteByEmpid).Methods("DELETE")
 
@@ -49,16 +45,29 @@ func main() {
 	router.HandleFunc(base+"/meals", handler.MealsGet).Methods("GET")
 	router.HandleFunc(base+"/meals/user/{empid:[a-zA-Z0-9]+}", handler.MealsGetByEmpid).Methods("GET")
 
-	router.HandleFunc(base+"/mealtypes", handler.MealTypePost).Methods("POST")
 	// @TODO: Add filters, pagination
-	router.HandleFunc(base+"/mealtypes", handler.MealTypesGet).Methods("GET")
-	// @TODO: implement
-	// router.HandleFunc(base+"/mealtypes/{mealtypeid}", handler.MealTypesPut).Methods("PUT")
+	router.HandleFunc(base+"/receipts", handler.ReceiptsGet).
+		Queries("start", "{start}", "end", "{end}").Methods("GET")
+	router.HandleFunc(base+"/receipts/user/{empid:[a-zA-Z0-9]+}", handler.ReceiptGetByEmpid).
+		Queries("start", "{start}", "end", "{end}").Methods("GET")
+	router.HandleFunc(base+"/receipts/user/{id:[0-9a-f]{24}", handler.ReceiptGetById).
+		Queries("start", "{start}", "end", "{end}").Methods("GET")
 
-	router.HandleFunc(base+"/receipts/user/{empid:[a-zA-Z0-9]+", handler.ReceiptGet).Methods("GET")
-	router.HandleFunc(base+"/receipts/user/{id:[0-9a-f]{24}", handler.ReceiptGet).Methods("GET")
+	router.HandleFunc(base+"/vendors", handler.VendorPost).Methods("POST")
+	router.HandleFunc(base+"/vendors/{id:[0-9a-f]{24}}", handler.VendorGet).Methods("GET") // order of these registrations matter !!!
+	router.HandleFunc(base+"/vendors/{vid:[a-zA-Z0-9]+}", handler.VendorGetByVid).Methods("GET")
 	// @TODO: Add filters, pagination
-	router.HandleFunc(base+"/receipts/", handler.ReceiptsGet).Methods("GET")
-	// @TODO listen and serve arguments fix?
-	http.ListenAndServe(cfg.ApiAddr, router)
+	router.HandleFunc(base+"/vendors", handler.VendorsGet).Methods("GET")
+	router.HandleFunc(base+"/vendors/{vid:[a-zA-Z0-9]+}", handler.VendorPutByVid).Methods("PUT")
+	router.HandleFunc(base+"/vendors/{id:[0-9a-f]{24}}", handler.VendorDelete).Methods("DELETE") // order of these registrations matter !!!
+	router.HandleFunc(base+"/vendors/{vid:[a-zA-Z0-9]+}", handler.VendorDeleteByVid).Methods("DELETE")
+
+	handler := handlers.CORS(
+		handlers.AllowedHeaders([]string{"X-Requested-With", "Content-Type", "Authorization"}),
+		handlers.AllowedMethods([]string{"GET", "POST", "PUT", "DELETE", "HEAD", "OPTIONS"}),
+		handlers.AllowedOrigins([]string{"*"}),
+	)(router)
+
+	Log.Info("Application is running at: ", cfg.ApiAddr+base)
+	http.ListenAndServe(cfg.ApiAddr, handler)
 }

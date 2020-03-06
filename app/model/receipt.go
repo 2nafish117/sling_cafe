@@ -1,13 +1,15 @@
 package model
 
 import (
-	"go.mongodb.org/mongo-driver/bson/primitive"
+	// "go.mongodb.org/mongo-driver/bson/primitive"
+	"sling_cafe/util"
 )
 
 type Receipt struct {
-	ID     primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	EmpId  string             `json:"empid,required" bson:"empid,required"`
-	AmtDue float32            `json:"amtdue,required" bson:"amtdue,required"`
+	// ID             primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	EmpId          string  `json:"_id,required" bson:"_id,required"`
+	AmtDue         float64 `json:"amtdue,required" bson:"amtdue,required"`
+	AmtOutstanding float64 `json:"amtoutstanding,required" bson:"amtoutstanding,required"`
 }
 
 // Validate receipt fields
@@ -17,10 +19,10 @@ type Receipt struct {
 func (r *Receipt) Validate() error {
 
 	// @TODO: add regex checks!!
-	// validating firstname field with retuired, min length 3, max length 25 and no regex check
-	// if e := util.ValidateRequireAndLengthAndRegex(u.Firstname, true, 3, 25, "", "firstname"); e != nil {
-	// 	return e
-	// }
+	// validating empid field with retuired, min length 1, max length 25 and regex check
+	if e := util.ValidateRequireAndLengthAndRegex(r.EmpId, true, 1, 25, "[a-zA-Z0-9]+", "empid"); e != nil {
+		return e
+	}
 
 	// // validating lastname field with retuired, min length 0, max length 25 and no regex check
 	// if e := util.ValidateRequireAndLengthAndRegex(u.Lastname, false, 3, 25, "", "lastname"); e != nil {

@@ -5,8 +5,8 @@ import (
 
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
-	"log"
 	"sling_cafe/config"
+	. "sling_cafe/log"
 )
 
 var dbInstance *mongo.Client = nil
@@ -42,10 +42,10 @@ func Connect() {
 	var err error
 	dbInstance, err = mongo.Connect(context.TODO(), clientOptions)
 	if err != nil {
-		// log.Print(err.Error())
-		log.Panic(err.Error())
+		Log.Fatalf(err.Error())
 	}
-	log.Print("connected to db at " + cfg.DbAddr)
+
+	Log.Info("Connected to db at: ", cfg.DbAddr)
 }
 
 // GetInstance Returns the singleton database instance

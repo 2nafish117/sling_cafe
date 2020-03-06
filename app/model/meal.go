@@ -1,34 +1,18 @@
 package model
 
 import (
-	// "context"
-	// "encoding/json"
-	// "fmt"
-
-	// "github.com/gorilla/mux"
-	// "go.mongodb.org/mongo-driver/bson"
+	"errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
-	_ "sling_cafe/util"
-	// "mongo_test/db"
-	// "net/http"
-	// "time"
+	"sling_cafe/util"
 )
 
-/*
-{
-    "mealtypeid": "lunchid",
-    "menuitemid" : "southindianid",
-    "timestamp": "sometime",
-    "employeeid": "dsfg9873"
-}
-
-*/
 // Meal model
 type Meal struct {
-	ID         primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
-	MealTypeId string             `json:"mealtypeid,required" bson:"mealtypeid,required"` // reference to a meal type
-	Timestamp  primitive.DateTime `json:"timestamp,required" bson:"timestamp,required"`   // time is generated server side using time.Now()
-	EmpId      string             `json:"empid,omitempty" bson:"empid,omitempty"`         // reference to an employee
+	ID        primitive.ObjectID `json:"_id,omitempty" bson:"_id,omitempty"`
+	EmpId     string             `json:"empid,omitempty" bson:"empid,omitempty"` // reference to an employee
+	Timestamp primitive.DateTime `json:"time,required" bson:"time,required"`     // time is generated server side using time.Now()
+	Cost      float64            `json:"cost,required" bson:"cost,required"`
+	MealType  string             `json:"mealtype,required" bson:"mealtype,required"` // reference to a meal type
 }
 
 // Validate fields
@@ -36,25 +20,20 @@ type Meal struct {
 // and return error is any
 // all errors are related to the fields
 func (m *Meal) Validate() error {
+	// validating empid field with retuired, min length 1, max length 25 and regex check
+	if e := util.ValidateRequireAndLengthAndRegex(m.EmpId, true, 1, 25, "[a-zA-Z0-9]+", "empid"); e != nil {
+		return e
+	}
 
-	// @TODO: add regex checks!!
-	// validating firstname field with retuired, min length 3, max length 25 and no regex check
-	// if e := util.ValidateRequireAndLengthAndRegex(m.Firstname, true, 3, 25, "", "firstname"); e != nil {
-	// 	return e
-	// }
+	// validating email field with required, min length 5, max length 25 and regex check
+	if e := util.ValidateRequireAndLengthAndRegex(m.MealType, true, 5, 25, `[a-z]+`, "mealtype"); e != nil {
+		return e
+	}
 
-	// // validating lastname field with retuired, min length 0, max length 25 and no regex check
-	// if e := util.ValidateRequireAndLengthAndRegex(m.Lastname, false, 3, 25, "", "lastname"); e != nil {
-	// 	return e
-	// }
-
-	// // validating email field with required, min length 5, max length 25 and regex check
-	// if e := util.ValidateRequireAndLengthAndRegex(m.Email, true, 5, 25, `^[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,4}$`, "email"); e != nil {
-	// 	return e
-	// }
+	// validating cost field with required, min length 0, max length 0 and regex check
+	if m.Cost < 0 {
+		return errors.New("cost is negative")
+	}
 
 	return nil
 }
-
-// var empid = ObjectId("5e3cda4d656f6acb7c10f61f")
-// db.meals.insert({mealtype : "lunch", timestamp: new Date(), "empid" : empid})

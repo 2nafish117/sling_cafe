@@ -14,13 +14,14 @@ import (
 // MealsFindAllByEmpid /
 // MealsInsertOne /
 
-const mealsCollection string = "meals"
+// MealsCollection name of collection
+const MealsCollection string = "meals"
 
 // MealsFindAll returns all meals
 // @TODO pagination version of FindAll
 func MealsFindAll(ctx context.Context) ([]*model.Meal, error) {
 	conn := db.GetInstance()
-	collection := conn.Database(config.GetInstance().DbName).Collection(mealsCollection)
+	collection := conn.Database(config.GetInstance().DbName).Collection(MealsCollection)
 	cursor, err := collection.Find(ctx, bson.M{})
 	meals := make([]*model.Meal, 0)
 	if err != nil {
@@ -38,7 +39,7 @@ func MealsFindAll(ctx context.Context) ([]*model.Meal, error) {
 // MealsFindOne returns first meal matching query
 func MealsFindOne(ctx context.Context, query interface{}) (*model.Meal, error) {
 	conn := db.GetInstance()
-	collection := conn.Database(config.GetInstance().DbName).Collection(mealsCollection)
+	collection := conn.Database(config.GetInstance().DbName).Collection(MealsCollection)
 	var meal model.Meal
 	err := collection.FindOne(ctx, query).Decode(&meal)
 	if err != nil {
@@ -51,7 +52,8 @@ func MealsFindOne(ctx context.Context, query interface{}) (*model.Meal, error) {
 // MealsFindAllByEmpid finds all the meals eaten by an employee of empid
 func MealsFindAllByEmpid(ctx context.Context, empid string) ([]*model.Meal, error) {
 	conn := db.GetInstance()
-	collection := conn.Database(config.GetInstance().DbName).Collection(mealsCollection)
+	collection := conn.Database(config.GetInstance().DbName).Collection(MealsCollection)
+
 	cursor, err := collection.Find(ctx, bson.M{"empid": empid})
 	meals := make([]*model.Meal, 0)
 	if err != nil {
@@ -69,7 +71,7 @@ func MealsFindAllByEmpid(ctx context.Context, empid string) ([]*model.Meal, erro
 // MealsInsertOne inserts one meal into the repository
 func MealsInsertOne(ctx context.Context, meal *model.Meal) (*model.Meal, error) {
 	conn := db.GetInstance()
-	collection := conn.Database(config.GetInstance().DbName).Collection(mealsCollection)
+	collection := conn.Database(config.GetInstance().DbName).Collection(MealsCollection)
 	result, err := collection.InsertOne(ctx, meal)
 
 	if err != nil {

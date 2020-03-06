@@ -12,27 +12,27 @@ import (
 	"sling_cafe/util"
 )
 
-// UsersGet gets all users
+// VendorsGet gets all vendors
 // @TODO get filters for pagination
-// @TODO: return mongo db id or empid?
-func UsersGet(response http.ResponseWriter, request *http.Request) {
-	users, err := repo.UsersFindAll(context.TODO())
+// @TODO: return mongo db id or vid?
+func VendorsGet(response http.ResponseWriter, request *http.Request) {
+	vendors, err := repo.VendorsFindAll(context.TODO())
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusNotFound, err.Error())
 		util.Response(response, httpError)
 		return
 	}
 
-	util.Response(response, users)
+	util.Response(response, vendors)
 }
 
-// UserGet gets user
-func UserGet(response http.ResponseWriter, request *http.Request) {
+// VendorGet gets vendor
+func VendorGet(response http.ResponseWriter, request *http.Request) {
 	// response.Header().Set("content-type", "application/json")
 	params := mux.Vars(request)
 
 	id, _ := params["id"]
-	user, err := repo.UsersFindOneById(context.TODO(), id)
+	vendor, err := repo.VendorsFindOneById(context.TODO(), id)
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusNotFound, err.Error())
 		util.Response(response, httpError)
@@ -40,93 +40,93 @@ func UserGet(response http.ResponseWriter, request *http.Request) {
 		// response.Write([]byte(`{ "message": "` + err.Error() + `" }`))
 		return
 	}
-	util.Response(response, user)
-	// json.NewEncoder(response).Encode(user)
+	util.Response(response, vendor)
+	// json.NewEncoder(response).Encode(vendor)
 }
 
-// UserGetByEmpid gets user by empid
-func UserGetByEmpid(response http.ResponseWriter, request *http.Request) {
+// VendorGetByVid gets vendor by vid
+func VendorGetByVid(response http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
-	empid, _ := params["empid"]
+	vid, _ := params["vid"]
 
-	user, err := repo.UsersFindByEmpid(context.TODO(), empid)
+	vendor, err := repo.VendorsFindByVid(context.TODO(), vid)
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusNotFound, err.Error())
 		util.Response(response, httpError)
 		return
 	}
-	util.Response(response, user)
+	util.Response(response, vendor)
 }
 
-// UserPost inserts a user
-func UserPost(response http.ResponseWriter, request *http.Request) {
-	var user model.User
-	err := json.NewDecoder(request.Body).Decode(&user)
+// VendorPost inserts a vendor
+func VendorPost(response http.ResponseWriter, request *http.Request) {
+	var vendor model.Vendor
+	err := json.NewDecoder(request.Body).Decode(&vendor)
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
 		util.Response(response, httpError)
 		return
 	}
 
-	if err := user.Validate(); err != nil {
+	if err := vendor.Validate(); err != nil {
 		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
 		util.Response(response, httpError)
 		return
 	}
 
-	// Check if user with empid already exists, if it does dont add that user
-	if repo.UsersIsAlreadyExistsWithEmpid(context.TODO(), user.EmpId) {
-		httpError := util.NewErrorResponse(http.StatusForbidden, "user already exists")
+	// Check if vendor with vid already exists, if it does dont add that vendor
+	if repo.VendorsIsAlreadyExistsWithVid(context.TODO(), vendor.VId) {
+		httpError := util.NewErrorResponse(http.StatusForbidden, "vendor already exists")
 		util.Response(response, httpError)
 		return
 	}
 
-	u, err := repo.UsersInsertOne(context.TODO(), &user)
+	v, err := repo.VendorsInsertOne(context.TODO(), &vendor)
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusInternalServerError, err.Error())
 		util.Response(response, httpError)
 		return
 	}
-	util.Response(response, u)
+	util.Response(response, v)
 }
 
-// UserPutByEmpid updates user by id
-func UserPutByEmpid(response http.ResponseWriter, request *http.Request) {
+// VendorPutByVid updates vendor by id
+func VendorPutByVid(response http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
-	empid, _ := params["empid"]
+	vid, _ := params["vid"]
 
-	var user model.User
-	err := json.NewDecoder(request.Body).Decode(&user)
+	var vendor model.Vendor
+	err := json.NewDecoder(request.Body).Decode(&vendor)
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
 		util.Response(response, httpError)
 		return
 	}
 
-	if err := user.Validate(); err != nil {
+	if err := vendor.Validate(); err != nil {
 		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
 		util.Response(response, httpError)
 		return
 	}
 
-	// Check if user with empid already exists, if it does dont add that user
-	if !repo.UsersIsAlreadyExistsWithEmpid(context.TODO(), user.EmpId) {
-		httpError := util.NewErrorResponse(http.StatusForbidden, "user doesnt exist to update!!")
+	// Check if vendor with vid already exists, if it does dont add that vendor
+	if !repo.VendorsIsAlreadyExistsWithVid(context.TODO(), vendor.VId) {
+		httpError := util.NewErrorResponse(http.StatusForbidden, "vendor doesnt exist to update!!")
 		util.Response(response, httpError)
 		return
 	}
 
-	u, err := repo.UsersUpdateOneByEmpid(context.TODO(), empid, &user)
+	v, err := repo.VendorsUpdateOneByVid(context.TODO(), vid, &vendor)
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusInternalServerError, err.Error())
 		util.Response(response, httpError)
 		return
 	}
-	util.Response(response, u)
+	util.Response(response, v)
 }
 
-// UserDelete deletes user by id
-func UserDelete(response http.ResponseWriter, request *http.Request) {
+// VendorDelete deletes vendor by id
+func VendorDelete(response http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
 
 	internalId, err := primitive.ObjectIDFromHex(params["id"])
@@ -135,26 +135,26 @@ func UserDelete(response http.ResponseWriter, request *http.Request) {
 		util.Response(response, httpError)
 		return
 	}
-	user := &model.User{ID: internalId}
-	u, err := repo.UsersDeleteOne(context.TODO(), user)
+	vendor := &model.Vendor{ID: internalId}
+	v, err := repo.VendorsDeleteOne(context.TODO(), vendor)
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusNotFound, err.Error())
 		util.Response(response, httpError)
 		return
 	}
-	util.Response(response, u)
+	util.Response(response, v)
 }
 
-// UserDeleteByEmpid deletes user by empid
-func UserDeleteByEmpid(response http.ResponseWriter, request *http.Request) {
+// VendorDeleteByVid deletes vendor by vid
+func VendorDeleteByVid(response http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
-	empid, _ := params["empid"]
+	vid, _ := params["vid"]
 
-	user, err := repo.UsersDeleteByEmpid(context.TODO(), empid)
+	vendor, err := repo.VendorsDeleteByVid(context.TODO(), vid)
 	if err != nil {
 		httpError := util.NewErrorResponse(http.StatusNotFound, err.Error())
 		util.Response(response, httpError)
 		return
 	}
-	util.Response(response, user)
+	util.Response(response, vendor)
 }
