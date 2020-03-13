@@ -46,12 +46,8 @@ func main() {
 	router.HandleFunc(base+"/meals/user/{empid:[a-zA-Z0-9]+}", handler.MealsGetByEmpid).Methods("GET")
 
 	// @TODO: Add filters, pagination
-	router.HandleFunc(base+"/receipts", handler.ReceiptsGet).
-		Queries("start", "{start}", "end", "{end}").Methods("GET")
-	router.HandleFunc(base+"/receipts/user/{empid:[a-zA-Z0-9]+}", handler.ReceiptGetByEmpid).
-		Queries("start", "{start}", "end", "{end}").Methods("GET")
-	router.HandleFunc(base+"/receipts/user/{id:[0-9a-f]{24}", handler.ReceiptGetById).
-		Queries("start", "{start}", "end", "{end}").Methods("GET")
+	router.HandleFunc(base+"/receipts", handler.ReceiptsGet).Methods("GET")
+	router.HandleFunc(base+"/receipts/user/{empid:[a-zA-Z0-9]+}", handler.ReceiptGetByEmpid).Methods("GET")
 
 	router.HandleFunc(base+"/vendors", handler.VendorPost).Methods("POST")
 	router.HandleFunc(base+"/vendors/{id:[0-9a-f]{24}}", handler.VendorGet).Methods("GET") // order of these registrations matter !!!

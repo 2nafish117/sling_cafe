@@ -42,6 +42,17 @@ db.meals.aggregate([
 	{ $group: { _id: "$empid", amtdue: { $sum: "$cost" } } }
 ])
 
+// get total amount all employees in total owe from start to end
+db.meals.aggregate([ 
+	{ $match: { time: { $gt: start_date, $lte: end_date } } },
+	{ $group : { _id : ObjectId(), total : { $sum : "$cost" } } } 
+])
+
+// works
+db.meals.aggregate([ 
+	{ $match: { time: { $gt: ISODate("2020-03-06T05:59:59.108Z"), $lte: ISODate("2020-03-06T09:31:45.211Z") } } }, 
+	{ $group : { _id : ObjectId(), total : { $sum : "$cost" } } } 
+])
 
 // get bill for all employees from start_date to end_date
 
@@ -54,6 +65,30 @@ db.meals.aggregate([
 db.meals.aggregate([
 	{ $match: { time: { $gt: ISODate("2020-01-26T03:47:42.213Z"), $lte:  ISODate("2020-04-05T07:34:35.304Z") } } },
 	{ $group: { _id: "$empid", amtdue: { $sum: "$cost" } } }
+])
+
+// get all employee details along with receipts for all employees
+db.meals.aggregate([
+	{ $match: { time: { $gt: ISODate("2020-01-26T03:47:42.213Z"), $lte:  ISODate("2020-04-05T07:34:35.304Z") } } },
+	{ $lookup: { from: "users" , localField: "empid", foreignField: "empid", as: "emp" } },
+	{ $unwind: { path: "$emp" } },
+	{ $group: { _id: "$empid", fname : {$first: "$emp.fname"}, lname : {$first: "$emp.lname"}, email : {$first: "$emp.email"}, amtdue: { $sum: "$cost" } } }
+])
+
+db.meals.aggregate([
+	{ $match: { time: { $gt: ISODate("2020-01-26T03:47:42.213Z"), $lte:  ISODate("2020-04-05T07:34:35.304Z") } } },
+	{ $lookup: { from: "users" , localField: "empid", foreignField: "empid", as: "emp" } },
+	{ $unwind: { path: "$emp" } },
+	{ $group: { _id: { empid: "$empid", mealtype: "$mealtype" }, fname : {$first: "$emp.fname"}, lname : {$first: "$emp.lname"}, email : {$first: "$emp.email"}, cost: { $sum: "$cost" }, num: { $sum: 1 } } },
+	{ $group: { _id: "$_id.empid", } }
+])
+
+// get top 3 defaulters of from start to end
+db.meals.aggregate([ 
+	{ $match: { time: { $gt: ISODate("2020-01-26T03:47:42.213Z"), $lte:  ISODate("2020-04-05T07:34:35.304Z") } } }, 
+	{ $group: { _id: "$empid", amtdue: { $sum: "$cost" } } }, 
+	{ $sort : {amtdue : -1} },
+	{ $limit: 3 } 
 ])
 
 // add an index to the collection
