@@ -4,7 +4,8 @@
 * streamline the requests with optional queries (vhighp)
 
 
-* add script to generate initial database state (highp)
+* add script to generate initial database state (highp) /
+* Oauth2 endpoints
 * should i cache receiepts of users ? for performace (highp)
 * pagination on multiple things (highp)
 * streamline responses (highp)

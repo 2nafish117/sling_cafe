@@ -12,17 +12,17 @@ import (
 
 // VendorsFindAll /
 // VendorsFindOne /
-// VendorsFindByEmpid /
+// VendorsFindByuid /
 // VendorsFindOneById /
 // VendorsDeleteOne /
-// VendorsDeleteByEmpid /
+// VendorsDeleteByuid /
 // VendorsUpdateOneById /
 // VendorsUpdateOne /
 // VendorsUpdateOneById /
-// VendorsUpdateOneByEmpid /
+// VendorsUpdateOneByuid /
 // VendorsIsAlreadyExists /
 // VendorsIsAlreadyExistsWithId /
-// VendorsIsAlreadyExistsWithEmpid /
+// VendorsIsAlreadyExistsWithuid /
 
 // VendorsCollection name of vendors collection
 const VendorsCollection string = "vendors"

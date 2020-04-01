@@ -11,27 +11,6 @@ import (
 
 var dbInstance *mongo.Client = nil
 
-// // init always runs only once, irresepective of number of times this package is imported
-// func init() {
-
-// 	// @TODO: context change?
-// 	ctx, cancel := context.WithTimeout(context.Background(), 10*time.Second)
-// 	defer cancel()
-
-// 	cfg := config.GetInstance()
-
-// 	clientOptions := options.Client().ApplyURI("mongodb://" + cfg.DbAddr)
-
-// 	var err error
-// 	dbInstance, err = mongo.Connect(ctx, clientOptions)
-// 	if err != nil {
-// 		log.Print(err.Error())
-
-// 	}
-// 	log.Print("connected to db at " + cfg.DbAddr)
-
-// }
-
 // call Connect manually from main, explicitly
 func Connect() {
 
@@ -44,7 +23,6 @@ func Connect() {
 	if err != nil {
 		Log.Fatalf(err.Error())
 	}
-
 	Log.Info("Connected to db at: ", cfg.DbAddr)
 }
 

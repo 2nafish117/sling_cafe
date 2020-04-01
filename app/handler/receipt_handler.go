@@ -19,34 +19,37 @@ import (
 func ReceiptsGet(response http.ResponseWriter, request *http.Request) {
 
 	queries := request.URL.Query()
-	Log.Info(queries)
 
 	// @TODO: add default values
 	now := time.Now()
 	oneMonthAgo := now.AddDate(0, 0, -30)
 
+	// str := time.RFC3339Nano
+	// layout := "2006-01-02T15:04:05Z"
+
 	start, err := time.Parse("2006-01-02", util.GetOptQuery(queries.Get("start"), oneMonthAgo.Format("2006-01-02")))
 	if err != nil {
-		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
-		util.Response(response, httpError)
+
+		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
 	end, err := time.Parse("2006-01-02", util.GetOptQuery(queries.Get("end"), now.Format("2006-01-02")))
 	if err != nil {
-		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
-		util.Response(response, httpError)
+		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
 	if start.UnixNano() > end.UnixNano() {
-		httpError := util.NewErrorResponse(http.StatusBadRequest, "start date is greater than end date")
-		util.Response(response, httpError)
+		httpError := util.NewStatus(http.StatusBadRequest, "start date is greater than end date")
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
 
 	limit, err := strconv.Atoi(util.GetOptQuery(queries.Get("limit"), "500"))
 	if err != nil {
-		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
-		util.Response(response, httpError)
+		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
 
@@ -63,10 +66,10 @@ func ReceiptsGet(response http.ResponseWriter, request *http.Request) {
 				},
 			},
 		},
-		// Stage 2, group by empid and add up the costs to find amtdue
+		// Stage 2, group by uid and add up the costs to find amtdue
 		bson.D{bson.E{
 			Key: "$group", Value: bson.D{
-				bson.E{Key: "_id", Value: "$empid"},
+				bson.E{Key: "_id", Value: "$uid"},
 				bson.E{Key: "amtdue", Value: bson.D{bson.E{Key: "$sum", Value: "$cost"}}},
 			}}},
 
@@ -86,22 +89,22 @@ func ReceiptsGet(response http.ResponseWriter, request *http.Request) {
 
 	receipts, err := repo.ReceiptsAggregate(context.TODO(), pipeline)
 	if err != nil {
-		httpError := util.NewErrorResponse(http.StatusNotFound, err.Error())
-		util.Response(response, httpError)
+		httpError := util.NewStatus(http.StatusNotFound, err.Error())
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
-	util.Response(response, receipts)
+	util.Response(response, receipts, util.NewStatus(http.StatusOK, ""))
 }
 
-// ReceiptGetByEmpid gets an employees receipt
-func ReceiptGetByEmpid(response http.ResponseWriter, request *http.Request) {
+// ReceiptGetByUId gets an employees receipt
+func ReceiptGetByUId(response http.ResponseWriter, request *http.Request) {
 	queries := request.URL.Query()
 	params := mux.Vars(request)
 	Log.Info(queries)
 	// @TODO: get time interval from query params
 	// @TODO: what if startTime > endTime ???
 
-	empid, _ := params["empid"]
+	uid, _ := params["uid"]
 
 	// @TODO: add default params
 
@@ -111,19 +114,19 @@ func ReceiptGetByEmpid(response http.ResponseWriter, request *http.Request) {
 
 	start, err := time.Parse("2006-01-02", util.GetOptQuery(queries.Get("start"), oneMonthAgo.Format("2006-01-02")))
 	if err != nil {
-		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
-		util.Response(response, httpError)
+		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
 	end, err := time.Parse("2006-01-02", util.GetOptQuery(queries.Get("end"), now.Format("2006-01-02")))
 	if err != nil {
-		httpError := util.NewErrorResponse(http.StatusBadRequest, err.Error())
-		util.Response(response, httpError)
+		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
 	if start.UnixNano() > end.UnixNano() {
-		httpError := util.NewErrorResponse(http.StatusBadRequest, "start time is greater than end time")
-		util.Response(response, httpError)
+		httpError := util.NewStatus(http.StatusBadRequest, "start time is greater than end time")
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
 
@@ -132,7 +135,7 @@ func ReceiptGetByEmpid(response http.ResponseWriter, request *http.Request) {
 		bson.D{
 			bson.E{
 				Key: "$match", Value: bson.D{
-					bson.E{Key: "empid", Value: empid},
+					bson.E{Key: "uid", Value: uid},
 					bson.E{Key: "time", Value: bson.D{
 						bson.E{Key: "$gt", Value: primitive.NewDateTimeFromTime(start)},
 						bson.E{Key: "$lte", Value: primitive.NewDateTimeFromTime(end)},
@@ -141,10 +144,10 @@ func ReceiptGetByEmpid(response http.ResponseWriter, request *http.Request) {
 				},
 			},
 		},
-		// Stage 2, group by empid and add up the costs to find amtdue
+		// Stage 2, group by uid and add up the costs to find amtdue
 		bson.D{bson.E{
 			Key: "$group", Value: bson.D{
-				bson.E{Key: "_id", Value: "$empid"},
+				bson.E{Key: "_id", Value: "$uid"},
 				bson.E{Key: "amtdue", Value: bson.D{bson.E{Key: "$sum", Value: "$cost"}}},
 			}},
 		},
@@ -152,9 +155,9 @@ func ReceiptGetByEmpid(response http.ResponseWriter, request *http.Request) {
 
 	receipts, err := repo.ReceiptsAggregate(context.TODO(), pipeline)
 	if err != nil {
-		httpError := util.NewErrorResponse(http.StatusNotFound, err.Error())
-		util.Response(response, httpError)
+		httpError := util.NewStatus(http.StatusNotFound, err.Error())
+		util.Response(response, struct{}{}, httpError)
 		return
 	}
-	util.Response(response, receipts)
+	util.Response(response, receipts, util.NewStatus(http.StatusOK, ""))
 }

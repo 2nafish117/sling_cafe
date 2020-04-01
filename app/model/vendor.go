@@ -19,7 +19,7 @@ type Vendor struct {
 // all errors are related to the fields
 func (v *Vendor) Validate() error {
 
-	// validating empid field with retuired, min length 1, max length 25 and regex check
+	// validating uid field with retuired, min length 1, max length 25 and regex check
 	if e := util.ValidateRequireAndLengthAndRegex(v.VId, true, 1, 25, "[a-zA-Z0-9]+", "vid"); e != nil {
 		return e
 	}

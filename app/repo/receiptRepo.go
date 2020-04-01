@@ -14,17 +14,17 @@ import (
 
 // ReceiptsFindAll /
 // ReceiptsFindOne
-// ReceiptsFindByEmpid
+// ReceiptsFindByUId
 // ReceiptsFindOneById
 // ReceiptsDeleteOne
-// ReceiptsDeleteByEmpid
+// ReceiptsDeleteByUId
 // ReceiptsUpdateOneById
 // ReceiptsUpdateOne
 // ReceiptsUpdateOneById
-// ReceiptsUpdateOneByEmpid
+// ReceiptsUpdateOneByUId
 // ReceiptsIsAlreadyExists
 // ReceiptsIsAlreadyExistsWithId
-// ReceiptsIsAlreadyExistsWithEmpid
+// ReceiptsIsAlreadyExistsWithUId
 
 // ReceiptsAggregate finds receipts based on pipeline and aggregation
 func ReceiptsAggregate(ctx context.Context, pipeline interface{}) ([]*model.Receipt, error) {
@@ -51,11 +51,11 @@ func ReceiptsAggregate(ctx context.Context, pipeline interface{}) ([]*model.Rece
 // ReceiptsFindAll finds all users receipts for all time
 func ReceiptsFindAll(ctx context.Context) ([]*model.Receipt, error) {
 	pipeline := mongo.Pipeline{
-		// Stage 1, group by empid and add up the costs to find amtdue
+		// Stage 1, group by uid and add up the costs to find amtdue
 		bson.D{primitive.E{
 			Key: "$group", Value: bson.D{
 				primitive.E{Key: "_id", Value: "$_id"}, // @TODO: what should _id of receipt be?
-				primitive.E{Key: "empid", Value: bson.D{primitive.E{Key: "$first", Value: "$empid"}}},
+				primitive.E{Key: "uid", Value: bson.D{primitive.E{Key: "$first", Value: "$uid"}}},
 				primitive.E{Key: "amtdue", Value: bson.D{primitive.E{Key: "$sum", Value: "$cost"}}},
 			}},
 		},

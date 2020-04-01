@@ -11,7 +11,7 @@ import (
 
 // MealsFindAll /
 // MealsFindOne /
-// MealsFindAllByEmpid /
+// MealsFindAllByUId /
 // MealsInsertOne /
 
 // MealsCollection name of collection
@@ -49,12 +49,12 @@ func MealsFindOne(ctx context.Context, query interface{}) (*model.Meal, error) {
 	return &meal, nil
 }
 
-// MealsFindAllByEmpid finds all the meals eaten by an employee of empid
-func MealsFindAllByEmpid(ctx context.Context, empid string) ([]*model.Meal, error) {
+// MealsFindAllByUId finds all the meals eaten by an employee of uid
+func MealsFindAllByUId(ctx context.Context, uid string) ([]*model.Meal, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(MealsCollection)
 
-	cursor, err := collection.Find(ctx, bson.M{"empid": empid})
+	cursor, err := collection.Find(ctx, bson.M{"uid": uid})
 	meals := make([]*model.Meal, 0)
 	if err != nil {
 		return meals, err
