@@ -27,14 +27,14 @@ func ReceiptsGet(response http.ResponseWriter, request *http.Request) {
 	// str := time.RFC3339Nano
 	// layout := "2006-01-02T15:04:05Z"
 
-	start, err := time.Parse("2006-01-02", util.GetOptQuery(queries.Get("start"), oneMonthAgo.Format("2006-01-02")))
+	start, err := time.Parse("2006-01-02T15:04:05Z", util.GetOptQuery(queries.Get("start"), oneMonthAgo.Format("2006-01-02T15:04:05Z")))
 	if err != nil {
 
 		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
 		util.Response(response, struct{}{}, httpError)
 		return
 	}
-	end, err := time.Parse("2006-01-02", util.GetOptQuery(queries.Get("end"), now.Format("2006-01-02")))
+	end, err := time.Parse("2006-01-02T15:04:05Z", util.GetOptQuery(queries.Get("end"), now.Format("2006-01-02T15:04:05Z")))
 	if err != nil {
 		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
 		util.Response(response, struct{}{}, httpError)
@@ -112,13 +112,13 @@ func ReceiptGetByUId(response http.ResponseWriter, request *http.Request) {
 	now := time.Now()
 	oneMonthAgo := now.AddDate(0, 0, -30)
 
-	start, err := time.Parse("2006-01-02", util.GetOptQuery(queries.Get("start"), oneMonthAgo.Format("2006-01-02")))
+	start, err := time.Parse("2006-01-02T15:04:05Z", util.GetOptQuery(queries.Get("start"), oneMonthAgo.Format("2006-01-02T15:04:05Z")))
 	if err != nil {
 		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
 		util.Response(response, struct{}{}, httpError)
 		return
 	}
-	end, err := time.Parse("2006-01-02", util.GetOptQuery(queries.Get("end"), now.Format("2006-01-02")))
+	end, err := time.Parse("2006-01-02T15:04:05Z", util.GetOptQuery(queries.Get("end"), now.Format("2006-01-02T15:04:05Z")))
 	if err != nil {
 		httpError := util.NewStatus(http.StatusBadRequest, err.Error())
 		util.Response(response, struct{}{}, httpError)
