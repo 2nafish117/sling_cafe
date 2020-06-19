@@ -5,34 +5,24 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	// "go.mongodb.org/mongo-driver/mongo/options"
+	"errors"
 	"mongo_test/db"
 	"sling_cafe/app/model"
 	"sling_cafe/config"
 	"sling_cafe/util"
+	"time"
 )
 
-// MealTypesFindAll /
-// MealTypesFindOne /
-// MealTypesFindOneById /
-// MealTypesDeleteOne /
-// MealTypesUpdateOneById /
-// MealTypesUpdateOne /
-// MealTypesUpdateOneById /
-// MealTypesIsAlreadyExists /
-// MealTypesIsAlreadyExistsWithId /
-
 // MealTypesCollection name of users collection
-const MealTypesCollection string = "mealtypes"
+const MealTypesCollection string = "meal_types"
 
-// MealTypesFindAll returns all mealtypes from repo
-// @TODO pagination version of FindAll
-func MealTypesFindAll(ctx context.Context) ([]*model.MealType, error) {
+func MealTypesFind(ctx context.Context, query interface{}) ([]*model.MealType, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(MealTypesCollection)
 
-	cursor, err := collection.Find(ctx, bson.M{})
+	cursor, err := collection.Find(ctx, query)
 
-	var mealtypes []*model.MealType
+	mealtypes := make([]*model.MealType, 0)
 	if err != nil {
 		return mealtypes, err
 	}
@@ -45,8 +35,12 @@ func MealTypesFindAll(ctx context.Context) ([]*model.MealType, error) {
 	return mealtypes, nil
 }
 
+func MealTypesFindAll(ctx context.Context) ([]*model.MealType, error) {
+	return MealTypesFind(ctx, bson.M{})
+}
+
 // MealtypesFindOne finds first mealtype matching query and returns it
-func MealtypesFindOne(ctx context.Context, query interface{}) (*model.MealType, error) {
+func MealTypesFindOne(ctx context.Context, query interface{}) (*model.MealType, error) {
 	conn := db.GetInstance()
 	collection := conn.Database(config.GetInstance().DbName).Collection(MealTypesCollection)
 	var mealtype model.MealType
@@ -54,9 +48,26 @@ func MealtypesFindOne(ctx context.Context, query interface{}) (*model.MealType, 
 	return &mealtype, err
 }
 
+func MealTypesFindOneByTimeOfDay(ctx context.Context, dt time.Time) (*model.MealType, error) {
+	mealTypes, err := MealTypesFindAll(ctx)
+	if err != nil {
+		return nil, err
+	}
+	hour, minute, second := dt.Clock()
+	convertedTime := time.Date(2020, 1, 1, hour, minute, second, 0, dt.Location())
+
+	for _, mt := range mealTypes {
+		if convertedTime.Unix() > mt.FromTime.Unix() && convertedTime.Unix() < mt.ToTime.Unix() {
+			return mt, nil
+		}
+	}
+
+	return nil, errors.New("no active mealtype at this time, come back later")
+}
+
 // MealTypesFindOneByType find the mealtype by id
-func MealTypesFindOneByType(ctx context.Context, typ string) (*model.MealType, error) {
-	return MealtypesFindOne(ctx, bson.M{"type": typ})
+func MealTypesFindOneByMealID(ctx context.Context, mealID string) (*model.MealType, error) {
+	return MealTypesFindOne(ctx, bson.M{"meal_id": mealID})
 }
 
 // MealTypesInsertOne inserts one mealtype to the repository
@@ -81,8 +92,8 @@ func MealTypesDeleteOne(ctx context.Context, query interface{}) (*model.MealType
 	return &mt, err
 }
 
-func MealTypesDeleteOneByType(ctx context.Context, typ string) (*model.MealType, error) {
-	return MealTypesDeleteOne(ctx, bson.M{"type": typ})
+func MealTypesDeleteOneByMealID(ctx context.Context, mealID string) (*model.MealType, error) {
+	return MealTypesDeleteOne(ctx, bson.M{"meal_id": mealID})
 }
 
 // MealTypesUpdateOne updates one
@@ -98,20 +109,20 @@ func MealTypesUpdateOne(ctx context.Context, query interface{}, update interface
 }
 
 // MealTypesUpdateOneByType updates one by id
-func MealTypesUpdateOneByType(ctx context.Context, typ string, update *model.MealType) (*model.MealType, error) {
+func MealTypesUpdateOneByMealID(ctx context.Context, mealID string, update *model.MealType) (*model.MealType, error) {
 	customBson := util.CustomBson{}
 	upd, err := customBson.Set(update)
 	if err != nil {
 		return nil, err
 	}
 
-	return MealTypesUpdateOne(ctx, bson.M{"type": typ}, upd)
+	return MealTypesUpdateOne(ctx, bson.M{"meal_id": mealID}, upd)
 }
 
 // MealTypesIsAlreadyExists asks repo if melatype already exists
 func MealTypesIsAlreadyExists(ctx context.Context, query interface{}) bool {
 	conn := db.GetInstance()
-	collection := conn.Database(config.GetInstance().DbName).Collection(UsersCollection)
+	collection := conn.Database(config.GetInstance().DbName).Collection(MealTypesCollection)
 	var mt model.MealType
 	erro := collection.FindOne(ctx, query).Decode(&mt)
 
@@ -119,6 +130,6 @@ func MealTypesIsAlreadyExists(ctx context.Context, query interface{}) bool {
 }
 
 // MealTypesIsAlreadyExistsWithId asks repo if already exists, by id
-func MealTypesIsAlreadyExistsWithType(ctx context.Context, typ string) bool {
-	return MealTypesIsAlreadyExists(ctx, bson.M{"type": typ})
+func MealTypesIsAlreadyExistsWithMealID(ctx context.Context, mealID model.MealID) bool {
+	return MealTypesIsAlreadyExists(ctx, bson.M{"meal_id": mealID})
 }

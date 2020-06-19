@@ -3,5 +3,5 @@
     "api_version" : "v1",
     "api_addr" : "localhost:12345",
     "db_addr" : "localhost:27017",
-    "db_name" : "sling_cafe"
+    "db_name" : "sling_cafe_db"
 }

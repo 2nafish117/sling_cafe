@@ -12,8 +12,6 @@ type Status struct {
 	Description string `json:"description" bson:"description"`
 }
 
-type Empty struct{}
-
 // NewStatus makes an error response object
 func NewStatus(code int, description string) Status {
 	var status Status
