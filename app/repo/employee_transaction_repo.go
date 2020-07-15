@@ -122,7 +122,7 @@ func EmployeeTransactionsAggregateReports(ctx context.Context) ([]*model.Employe
 	).Project(
 		bson.D{
 			{Key: "_id", Value: 0}, {Key: "employee_id", Value: "$employee.employee_id"}, {Key: "name", Value: "$employee.name"},
-			{Key: "amount", Value: 1},
+			{Key: "amount", Value: 1}, {Key: "workstation", Value: 1},
 		},
 	)
 

@@ -19,7 +19,7 @@ type AdminTransaction struct {
 	// VoucherNo       string             `json:"voucher_no,omitempty" bson:"voucher_no,omitempty"` // what is this ??
 	Mode    Mode   `json:"mode,required" bson:"mode,required"`
 	Amount  int64  `json:"amount,required,string" bson:"amount,required"`
-	Remarks string `json:"remarks,omitempty,string" bson:"remarks,omitempty"`
+	Remarks string `json:"remarks,omitempty" bson:"remarks,omitempty"`
 }
 
 // Validate fields
@@ -38,9 +38,9 @@ func (p *AdminTransaction) Validate() error {
 	}
 
 	// validating uid field with retuired, min length 1, max length 200 and regex check
-	if e := util.ValidateRequireAndLengthAndRegex(p.ManagerID, true, 1, 25, "[a-zA-Z0-9]+", "manager_id"); e != nil {
-		return e
-	}
+	// if e := util.ValidateRequireAndLengthAndRegex(p.ManagerID, false, 1, 25, "[a-zA-Z0-9]+", "manager_id"); e != nil {
+	// 	return e
+	// }
 
 	// if e := util.ValidateRequireAndLengthAndRegex(p.Mode, true, 1, 25, "[a-zA-Z ]+", "mode"); e != nil {
 	// 	return e
@@ -55,7 +55,7 @@ func (p *AdminTransaction) Validate() error {
 }
 
 type AdminTransactionReport struct {
-	AdminID string `json:"employee_id,required" bson:"employee_id,required"`
+	AdminID string `json:"admin_id,required" bson:"admin_id,required"`
 	Name    string `json:"name,required" bson:"name,required"`
 	Amount  int64  `json:"amount,required,string" bson:"amount,required"`
 }

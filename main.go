@@ -77,6 +77,9 @@ func main() {
 	router.HandleFunc(base+"/reports/admin_transactions", handler.AdminTransactionReportsGet).Methods("GET")
 	router.HandleFunc(base+"/reports/admin_transactions/admin/{admin_id:[a-zA-Z0-9]+}", handler.AdminTransactionReportGetByAdminID).Methods("GET")
 
+	// router.HandleFunc(base+"/reports/caterer_transactions", handler.CatererTransactionReportsGet).Methods("GET")
+	// router.HandleFunc(base+"/reports/caterer_transactions/caterer/{caterer_id:[a-zA-Z0-9]+}", handler.CatererTransactionReportGetByCatererID).Methods("GET")
+
 	// go repo.MonthEndEvent()
 	// go repo.DayEndEvent()
 	// go repo.HourEndEvent()

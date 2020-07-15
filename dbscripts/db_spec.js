@@ -58,3 +58,10 @@ db.meal_transactions.aggregate([
     { $group: { _id: { employee_id: "$employee_id" }, amount: { $sum: "$cost" }} },
     { $project: { _id: 0, employee_id: '$_id.employee_id', transaction_id: "", amount: 1, date_time: new Date(), transaction_type: "MonthlyPosting" }},
 ])
+
+// caterer wise amount due
+db.meal_entries.aggregate([
+    { $match: { date_time: { $gte: ISODate("2020-01-01T00:00:00.000Z"), $lte: ISODate("2020-10-01T00:00:00.000Z") } } },
+    { $group: { _id: { caterer_id: "$caterer_id" }, amount: { $sum: "$company_cost" }} },
+    { $project: { _id: 0, caterer_id: '$_id.caterer_id', transaction_id: "", amount: 1, date_time: new Date(), transaction_type: "MonthlyPosting" }},
+])

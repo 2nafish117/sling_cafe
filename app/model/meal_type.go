@@ -17,6 +17,7 @@ type MealType struct {
 	FromTime     time.Time          `json:"from_time,required" bson:"from_time,required"`
 	ToTime       time.Time          `json:"to_time,required" bson:"to_time,required"`
 	CatererID    string             `json:"caterer_id,required" bson:"caterer_id,required"` // who served that meal?
+	Inactive     bool               `json:"inactive,required" bson:"inactive,required"`     // is mealtype inactive ?
 }
 
 // Validate fields

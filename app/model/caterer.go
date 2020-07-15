@@ -1,7 +1,7 @@
 package model
 
 import (
-	"errors"
+	// "errors"
 	"go.mongodb.org/mongo-driver/bson/primitive"
 	"sling_cafe/util"
 	"time"
@@ -18,8 +18,8 @@ type Caterer struct {
 	LeaveDate time.Time          `json:"leave_date,omitempty" bson:"leave_date,omitempty"`
 	MealID    MealID             `json:"meal_id,required" bson:"meal_id,required"`
 	// ??
-	Cost int64 `json:"price,omitempty,string" bson:"price,omitempty"`
-	// IsActive bool     `json:"is_active,omitempty" bson:"is_active,omitempty"` active can be identified by leave_date
+	// Cost int64 `json:"price,omitempty,string" bson:"price,omitempty"`
+	Inctive bool `json:"inactive,required" bson:"inactive,required"`
 }
 
 // Validate Employee fields
@@ -48,10 +48,10 @@ func (u *Caterer) Validate() error {
 		return e
 	}
 
-	// validating cost field with
-	if u.Cost < 0 {
-		return errors.New("cost is negative")
-	}
+	// // validating cost field with
+	// if u.Cost < 0 {
+	// 	return errors.New("cost is negative")
+	// }
 
 	return nil
 }

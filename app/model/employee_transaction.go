@@ -53,7 +53,8 @@ func (p *EmployeeTransaction) Validate() error {
 }
 
 type EmployeeTransactionReport struct {
-	EmployeeID string `json:"employee_id,required" bson:"employee_id,required"`
-	Name       string `json:"name,required" bson:"name,required"`
-	Amount     int64  `json:"amount,required,string" bson:"amount,required"`
+	EmployeeID  string `json:"employee_id,required" bson:"employee_id,required"`
+	Name        string `json:"name,required" bson:"name,required"`
+	Amount      int64  `json:"amount,required,string" bson:"amount,required"`
+	Workstation int64  `json:"workstation,required,string" bson:"workstation,required"`
 }
