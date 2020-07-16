@@ -56,7 +56,7 @@ Uses the model, repo, handler structure.
 ├───db                                          // helper singleton to connect to database
 │       mongo.go
 │
-├───dbscripts                                   // testing scripts and testing mongodb queries (not essential for project)
+├───dbscripts                                   // scripts for testing db and mongodb queries (not essential for project)
 │       db_init.js
 │       db_meals_transactions.js
 │       db_payments_transactions.js
@@ -80,11 +80,11 @@ Uses the model, repo, handler structure.
 ## Installation
 
 1. Install go, follow the official install instructions
-2. Install all go dependencies with `go get` from the project directory
+2. Install all go dependencies by running `go get` from the project directory
 3. Install mongodb, follow official install instructions
 
 ### Building and Running
-1. `go build` from the project directory
+1. run `go build` from the project directory
 2. run the executable
 
 
