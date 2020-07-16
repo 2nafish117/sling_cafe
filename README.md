@@ -79,9 +79,9 @@ Uses the model, repo, handler structure.
 
 ## Installation
 
-1. Install go, follow the official install instructions
+1. Install go from https://golang.org/, follow the official install instructions
 2. Install all go dependencies by running `go get` from the project directory
-3. Install mongodb, follow official install instructions
+3. Install mongodb community edition from https://www.mongodb.com/try/download/community, follow official install instructions
 
 ### Building and Running
 1. run `go build` from the project directory
