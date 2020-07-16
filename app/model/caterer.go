@@ -19,7 +19,7 @@ type Caterer struct {
 	MealID    MealID             `json:"meal_id,required" bson:"meal_id,required"`
 	// ??
 	// Cost int64 `json:"price,omitempty,string" bson:"price,omitempty"`
-	Inctive bool `json:"inactive,required" bson:"inactive,required"`
+	Inactive bool `json:"inactive,required" bson:"inactive,required"`
 }
 
 // Validate Employee fields

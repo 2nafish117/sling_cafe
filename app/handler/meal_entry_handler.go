@@ -49,6 +49,19 @@ func MealEntryPost(response http.ResponseWriter, request *http.Request) {
 		util.Response(response, struct{}{}, httpError)
 		return
 	}
+
+	if mealType.Inactive {
+		httpError := util.NewStatus(http.StatusForbidden, "Meal Type is Inactive")
+		util.Response(response, struct{}{}, httpError)
+		return
+	}
+
+	if repo.CaterersIsInactive(context.TODO(), mealType.CatererID) {
+		httpError := util.NewStatus(http.StatusForbidden, "Caterer is Inactive")
+		util.Response(response, struct{}{}, httpError)
+		return
+	}
+
 	meal.MealID = mealType.MealID
 
 	// Get mealType using user given meal_id

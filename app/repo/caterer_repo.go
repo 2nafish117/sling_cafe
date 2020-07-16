@@ -144,3 +144,11 @@ func CaterersIsAlreadyExistsWithID(ctx context.Context, id string) bool {
 func CaterersIsAlreadyExistsWithCatererID(ctx context.Context, catererID string) bool {
 	return CaterersIsAlreadyExists(ctx, bson.M{"caterer_id": catererID})
 }
+
+func CaterersIsInactive(ctx context.Context, catererID string) bool {
+	cat, err := CaterersFindByCatererID(ctx, catererID)
+	if err != nil {
+		return false
+	}
+	return cat.Inactive
+}
